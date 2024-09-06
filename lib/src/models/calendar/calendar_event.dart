@@ -9,6 +9,7 @@ import 'package:kalender/src/extensions.dart';
 class CalendarEvent<T> with ChangeNotifier {
   CalendarEvent({
     required DateTimeRange dateTimeRange,
+    required this.spaceIndex,
     T? eventData,
     bool? modifiable,
   }) {
@@ -16,6 +17,8 @@ class CalendarEvent<T> with ChangeNotifier {
     _eventData = eventData;
     _canModify = modifiable ?? true;
   }
+
+  int spaceIndex;
 
   /// The [DateTimeRange] of the [CalendarEvent].
   late DateTimeRange _dateTimeRange;
@@ -133,9 +136,7 @@ class CalendarEvent<T> with ChangeNotifier {
   /// Whether the [CalendarEvent] continues after the given date.
   bool continuesAfter(DateTime date) {
     assert(
-      date.isWithin(dateTimeRange) ||
-          date == start.startOfDay ||
-          date == end.endOfDay,
+      date.isWithin(dateTimeRange) || date == start.startOfDay || date == end.endOfDay,
       'The date must be within the dateTimeRange of the event',
     );
     if (isSplitAcrossDays) {
@@ -149,12 +150,11 @@ class CalendarEvent<T> with ChangeNotifier {
   }
 
   /// The [DateTime]s that the [CalendarEvent] spans.
-  List<DateTime> get datesSpanned => dateTimeRange.datesSpanned;
+  List<DateTime> datesSpanned(int space) => dateTimeRange.datesSpanned(space);
 
   /// Whether the [CalendarEvent] is during the given [DateTimeRange].
   bool occursDuringDateTimeRange(DateTimeRange dateRange) {
-    final startsBeforeEndsAfter =
-        (start.isBefore(dateRange.start) && end.isAfter(dateRange.end));
+    final startsBeforeEndsAfter = (start.isBefore(dateRange.start) && end.isAfter(dateRange.end));
 
     final isWithin = start.isWithin(dateRange) || end.isWithin(dateRange);
 
@@ -180,6 +180,7 @@ class CalendarEvent<T> with ChangeNotifier {
     return CalendarEvent<T>(
       dateTimeRange: dateTimeRange ?? _dateTimeRange,
       eventData: eventData ?? _eventData,
+      spaceIndex: spaceIndex,
     );
   }
 

@@ -21,12 +21,10 @@ class MultiDayHeaderGestureDetector<T> extends StatefulWidget {
   final CreateEventTrigger createEventTrigger;
 
   @override
-  State<MultiDayHeaderGestureDetector<T>> createState() =>
-      _MultiDayHeaderGestureDetectorState<T>();
+  State<MultiDayHeaderGestureDetector<T>> createState() => _MultiDayHeaderGestureDetectorState<T>();
 }
 
-class _MultiDayHeaderGestureDetectorState<T>
-    extends State<MultiDayHeaderGestureDetector<T>> {
+class _MultiDayHeaderGestureDetectorState<T> extends State<MultiDayHeaderGestureDetector<T>> {
   CalendarScope<T> get scope => CalendarScope.of<T>(context);
   CalendarEventsController<T> get controller => scope.eventsController;
   CalendarEventHandlers<T> get functions => scope.functions;
@@ -41,26 +39,22 @@ class _MultiDayHeaderGestureDetectorState<T>
 
   @override
   Widget build(BuildContext context) {
-    final cursor =
-        createEvents ? SystemMouseCursors.click : SystemMouseCursors.basic;
+    final cursor = createEvents ? SystemMouseCursors.click : SystemMouseCursors.basic;
 
     return MouseRegion(
       cursor: cursor,
       child: Row(
         children: [
-          for (final date in widget.visibleDateRange.datesSpanned)
+          for (final date in widget.visibleDateRange.datesSpanned(controller.space))
             Expanded(
               child: GestureDetector(
-                onLongPress: () =>
-                    widget.createEventTrigger == CreateEventTrigger.longPress
-                        ? _createEvent(date)
-                        : controller.deselectEvent(),
+                onLongPress: () => widget.createEventTrigger == CreateEventTrigger.longPress
+                    ? _createEvent(date)
+                    : controller.deselectEvent(),
                 onTap: () => widget.createEventTrigger == CreateEventTrigger.tap
                     ? _createEvent(date)
                     : controller.deselectEvent(),
-                onPanStart: createEvents
-                    ? (details) => _onPanStart(details, date)
-                    : null,
+                onPanStart: createEvents ? (details) => _onPanStart(details, date) : null,
                 onPanUpdate: createEvents ? _onPanUpdate : null,
                 onPanEnd: createEvents ? _onPanEnd : null,
               ),
@@ -111,24 +105,20 @@ class _MultiDayHeaderGestureDetectorState<T>
     if (selectedEvent == null) return;
 
     final horizontalSteps = (cursorOffset.dx / widget.horizontalStep).round();
-    final verticalSteps = widget.verticalStep != null
-        ? (cursorOffset.dy / widget.verticalStep!).round()
-        : 0;
+    final verticalSteps = widget.verticalStep != null ? (cursorOffset.dy / widget.verticalStep!).round() : 0;
 
     if (widget.verticalStep != null &&
         currentHorizontalSteps == horizontalSteps &&
         currentVerticalSteps == verticalSteps) {
       return;
-    } else if (widget.verticalStep == null &&
-        currentHorizontalSteps == horizontalSteps) {
+    } else if (widget.verticalStep == null && currentHorizontalSteps == horizontalSteps) {
       return;
     }
 
     final dHorizontal = const Duration(days: 1) * horizontalSteps;
     final dVertical = const Duration(days: 7) * verticalSteps;
 
-    final newStart =
-        initialDateTimeRange!.start.add(dHorizontal).add(dVertical);
+    final newStart = initialDateTimeRange!.start.add(dHorizontal).add(dVertical);
     final newEnd = initialDateTimeRange!.end.add(dHorizontal).add(dVertical);
 
     if (newStart.isBefore(initialDateTimeRange!.start)) {

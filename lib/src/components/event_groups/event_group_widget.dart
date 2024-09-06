@@ -31,7 +31,6 @@ class EventGroupWidget<T> extends StatelessWidget {
     final children = <LayoutId>[];
     for (var i = 0; i < eventGroup.events.length; i++) {
       final event = eventGroup.events[i];
-
       // Check if the event is currently being moved.
       final isMoving = scope.eventsController.selectedEvent == event;
 

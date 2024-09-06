@@ -129,8 +129,7 @@ class EventGroupOverlapLayoutDelegate<T> extends EventGroupLayoutDelegate<T> {
         heightPerMinute,
       ).clamp(startDy, endDy);
 
-      final start =
-          eventStartOnDate.isBefore(startTime) ? startTime : eventStartOnDate;
+      final start = eventStartOnDate.isBefore(startTime) ? startTime : eventStartOnDate;
       final eventEndOnDate = event.dateTimeRangeOnDate(date).end;
       final end = eventEndOnDate.isAfter(endTime) ? endTime : eventEndOnDate;
 
@@ -195,8 +194,7 @@ class EventGroupBasicLayoutDelegate<T> extends EventGroupLayoutDelegate<T> {
           (otherEvent) {
             return entriesBefore.last.duration >= otherEvent.duration &&
                 !entriesBefore.contains(otherEvent) &&
-                entriesBefore.last.dateTimeRange
-                    .overlaps(otherEvent.dateTimeRange);
+                entriesBefore.last.dateTimeRange.overlaps(otherEvent.dateTimeRange);
           },
         );
 
@@ -216,8 +214,7 @@ class EventGroupBasicLayoutDelegate<T> extends EventGroupLayoutDelegate<T> {
 
     // Set the width of each tile.
     tileWidths.addEntries({
-      for (var i = 0; i < numChildren; i++)
-        MapEntry(i, (size.width / max(entriesToRight, 1)).floorToDouble()),
+      for (var i = 0; i < numChildren; i++) MapEntry(i, (size.width / max(entriesToRight, 1)).floorToDouble()),
     });
 
     // Calculate position of each tile.
@@ -226,8 +223,7 @@ class EventGroupBasicLayoutDelegate<T> extends EventGroupLayoutDelegate<T> {
 
       final eventsBefore = tilePositions.keys.map((e) => events[e]).where(
         (eventBefore) {
-          return event.dateTimeRange.overlaps(eventBefore.dateTimeRange) &&
-              eventBefore.duration >= event.duration;
+          return event.dateTimeRange.overlaps(eventBefore.dateTimeRange) && eventBefore.duration >= event.duration;
         },
       ).toList();
 
@@ -263,8 +259,7 @@ class EventGroupBasicLayoutDelegate<T> extends EventGroupLayoutDelegate<T> {
         heightPerMinute,
       ).clamp(startDy, endDy);
 
-      final start =
-          eventStartOnDate.isBefore(startTime) ? startTime : eventStartOnDate;
+      final start = eventStartOnDate.isBefore(startTime) ? startTime : eventStartOnDate;
       final eventEndOnDate = event.dateTimeRangeOnDate(date).end;
       final end = eventEndOnDate.isAfter(endTime) ? endTime : eventEndOnDate;
 

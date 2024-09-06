@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kalender/kalender.dart';
 import 'package:kalender/src/extensions.dart';
 import 'package:kalender/src/models/calendar/calendar_event.dart';
 
@@ -10,8 +11,7 @@ import 'package:kalender/src/models/calendar/calendar_event.dart';
 ///
 /// [multiDayTileHeight] is the height of a tile in the [MultiDayEventGroupWidget].
 ///
-abstract class MultiDayEventsLayoutDelegate<T>
-    extends MultiChildLayoutDelegate {
+abstract class MultiDayEventsLayoutDelegate<T> extends MultiChildLayoutDelegate {
   MultiDayEventsLayoutDelegate({
     required this.events,
     required this.visibleDateRange,
@@ -28,18 +28,15 @@ abstract class MultiDayEventsLayoutDelegate<T>
   }
 }
 
-class MultiDayEventsDefaultLayoutDelegate<T>
-    extends MultiDayEventsLayoutDelegate<T> {
-  MultiDayEventsDefaultLayoutDelegate({
-    required super.events,
-    required super.visibleDateRange,
-    required super.multiDayTileHeight,
-  });
+class MultiDayEventsDefaultLayoutDelegate<T> extends MultiDayEventsLayoutDelegate<T> {
+  MultiDayEventsDefaultLayoutDelegate(
+      {required super.events, required super.visibleDateRange, required super.multiDayTileHeight, required this.space});
 
+  final int space;
   @override
   void performLayout(Size size) {
     final numChildren = events.length;
-    final visibleDates = visibleDateRange.datesSpanned;
+    final visibleDates = visibleDateRange.datesSpanned(space);
 
     final dayWidth = size.width / visibleDates.length;
 
@@ -51,7 +48,7 @@ class MultiDayEventsDefaultLayoutDelegate<T>
       final id = i;
       final event = events[id];
 
-      final eventDates = event.datesSpanned;
+      final eventDates = event.datesSpanned(space);
 
       // first visible date.
       final firstVisibleDate = eventDates.firstWhere(
@@ -68,8 +65,7 @@ class MultiDayEventsDefaultLayoutDelegate<T>
         eventDates.indexOf(lastVisibleDate) + 1,
       );
 
-      final dx = (visibleDates.indexOf(visibleEventDates.first) * dayWidth)
-          .roundToDouble();
+      final dx = (visibleDates.indexOf(visibleEventDates.first) * dayWidth).roundToDouble();
       tileDx[id] = dx;
 
       // Calculate the width of the tile.
@@ -94,7 +90,7 @@ class MultiDayEventsDefaultLayoutDelegate<T>
       // Find events that fill the same dates as the current event.
       final eventsAbove = tilePositions.keys.map((e) => events[e]).where(
         (eventAbove) {
-          return eventAbove.datesSpanned.any(event.datesSpanned.contains);
+          return eventAbove.datesSpanned(space).any(event.datesSpanned(space).contains);
         },
       ).toList();
 

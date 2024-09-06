@@ -20,7 +20,7 @@ extension DateTimeRangeExtensions on DateTimeRange {
   }
 
   /// A list of [DateTime]s that the [DateTimeRange] spans.
-  List<DateTime> get datesSpanned {
+  List<DateTime> datesSpanned(int duplicates) {
     // Check if the start and end is equal.
     if (start == end) return [start.startOfDay];
 
@@ -35,16 +35,16 @@ extension DateTimeRangeExtensions on DateTimeRange {
     //   Use the localEndOfDate in utc.
     // else
     //   Use the localEndOfDate endOfDay in utc.
-    final utcEndOfDate = isLocalEndOfDateStartOfDay
-        ? localEndOfDate.toUtc()
-        : localEndOfDate.endOfDay.toUtc();
+    final utcEndOfDate = isLocalEndOfDateStartOfDay ? localEndOfDate.toUtc() : localEndOfDate.endOfDay.toUtc();
 
     // Calculate the dayDifference.
     final dayDifference = utcEndOfDate.difference(utcStartOfDate).inDays;
 
     final dates = <DateTime>[];
-    for (var i = 0; i < dayDifference; i++) {
-      dates.add(localStartOfDate.add(Duration(days: i)));
+    for (int j = 0; j < duplicates; j++) {
+      for (var i = 0; i < dayDifference; i++) {
+        dates.add(localStartOfDate.add(Duration(days: i)));
+      }
     }
 
     return dates;
@@ -59,8 +59,7 @@ extension DateTimeRangeExtensions on DateTimeRange {
   }
 
   /// The center [DateTime] of the [DateTimeRange].
-  DateTime get centerDateTime =>
-      start.add(Duration(days: (dayDifference / 2).floor()));
+  DateTime get centerDateTime => start.add(Duration(days: (dayDifference / 2).floor()));
 
   /// The visible month of the [DateTimeRange].
   DateTime get visibleMonth {
@@ -73,8 +72,8 @@ extension DateTimeRangeExtensions on DateTimeRange {
   }
 
   /// Returns the weekNumber(s) that the [DateTimeRange] spans.
-  (int weekNumber, int? secondWeekNumber) get weekNumbers {
-    final datesSpanned = this.datesSpanned;
+  (int weekNumber, int? secondWeekNumber) weekNumbers(int space) {
+    final datesSpanned = this.datesSpanned(space);
     final isSingleWeek = datesSpanned.length <= 7;
 
     if (start.year != end.year && isSingleWeek) {
@@ -90,8 +89,7 @@ extension DateTimeRangeExtensions on DateTimeRange {
 
     // This is custom so that if the user sets firstDayOfWeek to
     // monday, sunday or saturday we only show one week number.
-    final showOnlyOneWeekNumber = isSingleWeek &&
-        (start.weekday == 1 || start.weekday == 6 || start.weekday == 7);
+    final showOnlyOneWeekNumber = isSingleWeek && (start.weekday == 1 || start.weekday == 6 || start.weekday == 7);
 
     if (!showOnlyOneWeekNumber) {
       if (datesSpanned.first.weekNumber == datesSpanned.last.weekNumber) {
@@ -200,12 +198,10 @@ extension DateTimeExtensions on DateTime {
       );
 
   /// Checks if the [DateTime] is the same day as the calling object.
-  bool isSameDay(DateTime date) =>
-      year == date.year && month == date.month && day == date.day;
+  bool isSameDay(DateTime date) => year == date.year && month == date.month && day == date.day;
 
   /// Checks if the [DateTime] is within the [DateTimeRange].
-  bool isWithin(DateTimeRange range) =>
-      isAfter(range.start) && isBefore(range.end);
+  bool isWithin(DateTimeRange range) => isAfter(range.start) && isBefore(range.end);
 
   /// Checks if the [DateTime] is today.
   bool get isToday => isSameDay(DateTime.now());

@@ -6,7 +6,9 @@ import 'package:kalender/src/models/schedule_group.dart';
 
 /// A [ChangeNotifier] that manages [CalendarEvent]s.
 class CalendarEventsController<T> with ChangeNotifier {
-  CalendarEventsController();
+  /// The `space` parameter adds extra days to the end date, allowing
+  /// for overlap or a gap between this and another date range.
+  int space = 1;
 
   /// The list of [CalendarEvent]s.
   final List<CalendarEvent<T>> _events = <CalendarEvent<T>>[];
@@ -206,10 +208,7 @@ class CalendarEventsController<T> with ChangeNotifier {
     DateTimeRange dateRange,
   ) {
     return _events.where(
-      (element) =>
-          (element.start.isWithin(dateRange) ||
-              element.end.isWithin(dateRange)) &&
-          !element.isMultiDayEvent,
+      (element) => (element.start.isWithin(dateRange) || element.end.isWithin(dateRange)) && !element.isMultiDayEvent,
     );
   }
 
@@ -243,7 +242,7 @@ class CalendarEventsController<T> with ChangeNotifier {
     final scheduleGroups = <ScheduleGroup<T>>[];
 
     for (final event in _events) {
-      for (final date in event.datesSpanned) {
+      for (final date in event.datesSpanned(space)) {
         final index = scheduleGroups.indexWhere(
           (element) => element.date == date,
         );
@@ -270,8 +269,7 @@ class CalendarEventsController<T> with ChangeNotifier {
 
   @override
   bool operator ==(Object other) {
-    return other is CalendarEventsController &&
-        listEquals(other._events, _events);
+    return other is CalendarEventsController && listEquals(other._events, _events);
   }
 
   @override

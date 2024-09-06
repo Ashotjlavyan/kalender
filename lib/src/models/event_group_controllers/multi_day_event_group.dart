@@ -6,6 +6,7 @@ import 'package:kalender/src/models/calendar/calendar_event.dart';
 class MultiDayEventGroup<T> {
   factory MultiDayEventGroup.fromEvents({
     required Iterable<CalendarEvent<T>> events,
+    required int space
   }) {
     var maxNumberOfStackedEvents = 0;
     // Loop through each event on the date.
@@ -13,7 +14,7 @@ class MultiDayEventGroup<T> {
       // Find all events that overlap with the current event.
       final eventsAbove = events.where(
         (eventAbove) {
-          return eventAbove.datesSpanned.any(event.datesSpanned.contains);
+          return eventAbove.datesSpanned(space).any(event.datesSpanned(space).contains);
         },
       );
 

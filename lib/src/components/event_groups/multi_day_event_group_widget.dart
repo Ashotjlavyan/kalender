@@ -56,25 +56,24 @@ class MultiDayEventGroupWidget<T> extends StatelessWidget {
         continuesAfter: continuesAfter,
       );
 
-      final multiDayEventTile =
-          scope.tileComponents.multiDayEventTileBuilder?.call(
-                event,
-                tileConfiguration,
-                rescheduleDateRange ?? visibleDateRange,
-                horizontalStep,
-                horizontalStepDuration,
-                verticalStepDuration,
-                verticalStep,
-              ) ??
-              MultiDayEventGestureDetector(
-                event: event,
-                rescheduleDateRange: rescheduleDateRange ?? visibleDateRange,
-                horizontalStep: horizontalStep,
-                horizontalStepDuration: horizontalStepDuration,
-                verticalStep: verticalStep,
-                verticalStepDuration: verticalStepDuration,
-                tileConfiguration: tileConfiguration,
-              );
+      final multiDayEventTile = scope.tileComponents.multiDayEventTileBuilder?.call(
+            event,
+            tileConfiguration,
+            rescheduleDateRange ?? visibleDateRange,
+            horizontalStep,
+            horizontalStepDuration,
+            verticalStepDuration,
+            verticalStep,
+          ) ??
+          MultiDayEventGestureDetector(
+            event: event,
+            rescheduleDateRange: rescheduleDateRange ?? visibleDateRange,
+            horizontalStep: horizontalStep,
+            horizontalStepDuration: horizontalStepDuration,
+            verticalStep: verticalStep,
+            verticalStepDuration: verticalStepDuration,
+            tileConfiguration: tileConfiguration,
+          );
 
       children.add(
         LayoutId(
@@ -86,10 +85,10 @@ class MultiDayEventGroupWidget<T> extends StatelessWidget {
 
     return CustomMultiChildLayout(
       delegate: scope.layoutDelegates.multiDayTileLayoutDelegate(
-        events: multiDayEventGroup.events,
-        visibleDateRange: visibleDateRange,
-        multiDayTileHeight: multiDayTileHeight,
-      ),
+          events: multiDayEventGroup.events,
+          visibleDateRange: visibleDateRange,
+          multiDayTileHeight: multiDayTileHeight,
+          space: scope.eventsController.space),
       children: children,
     );
   }

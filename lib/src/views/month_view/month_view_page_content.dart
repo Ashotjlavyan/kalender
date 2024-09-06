@@ -28,7 +28,7 @@ class MonthViewPageContent<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     final scope = CalendarScope.of<T>(context);
     final components = CalendarStyleProvider.of(context).components;
-
+    final eventsController = scope.eventsController;
     return Stack(
       children: <Widget>[
         components.monthGridBuilder(),
@@ -57,27 +57,20 @@ class MonthViewPageContent<T> extends StatelessWidget {
                       );
 
                       // Get the events from the events controller.
-                      final events =
-                          scope.eventsController.getEventsFromDateRange(
+                      final events = scope.eventsController.getEventsFromDateRange(
                         weekDateRange,
                       );
 
-                      controller.visibleEvents =
-                          controller.visibleEvents.followedBy(events);
+                      controller.visibleEvents = controller.visibleEvents.followedBy(events);
 
                       // Create a multi day event group from the events.
-                      final multiDayEventGroup = MultiDayEventGroup.fromEvents(
-                        events: events,
-                      );
+                      final multiDayEventGroup =
+                          MultiDayEventGroup.fromEvents(events: events, space: eventsController.space);
 
-                      final selectedEvent =
-                          scope.eventsController.selectedEvent;
-                      final horizontalStepDuration =
-                          viewConfiguration.horizontalStepDuration;
-                      final verticalStepDuration =
-                          viewConfiguration.verticalStepDuration;
-                      final multiDayTileHeight =
-                          viewConfiguration.multiDayTileHeight;
+                      final selectedEvent = scope.eventsController.selectedEvent;
+                      final horizontalStepDuration = viewConfiguration.horizontalStepDuration;
+                      final verticalStepDuration = viewConfiguration.verticalStepDuration;
+                      final multiDayTileHeight = viewConfiguration.multiDayTileHeight;
 
                       // Calculate the height of the multi day event group.
                       final height = multiDayTileHeight *
@@ -85,10 +78,8 @@ class MonthViewPageContent<T> extends StatelessWidget {
                               (viewConfiguration.createMultiDayEvents ? 1 : 0));
 
                       final gestureDetector = MultiDayHeaderGestureDetector<T>(
-                        createMultiDayEvents:
-                            viewConfiguration.createMultiDayEvents,
-                        createEventTrigger:
-                            viewConfiguration.createEventTrigger,
+                        createMultiDayEvents: viewConfiguration.createMultiDayEvents,
+                        createEventTrigger: viewConfiguration.createEventTrigger,
                         visibleDateRange: weekDateRange,
                         horizontalStep: horizontalStep,
                         verticalStep: verticalStep,
@@ -114,26 +105,21 @@ class MonthViewPageContent<T> extends StatelessWidget {
                               visibleDateRange.start.add(
                                 Duration(days: (c * 7) + r),
                               ),
-                              (date) =>
-                                  scope.functions.onDateTapped?.call(date),
+                              (date) => scope.functions.onDateTapped?.call(date),
                             ),
                         ],
                       );
 
                       ListenableBuilder? changingEvent;
-                      if (selectedEvent != null &&
-                          scope.eventsController.hasChangingEvent) {
+                      if (selectedEvent != null && scope.eventsController.hasChangingEvent) {
                         changingEvent = ListenableBuilder(
                           listenable: scope.eventsController.selectedEvent!,
                           builder: (context, child) {
-                            final occursDuring = selectedEvent
-                                .occursDuringDateTimeRange(weekDateRange);
+                            final occursDuring = selectedEvent.occursDuringDateTimeRange(weekDateRange);
 
                             if (occursDuring) {
                               final multiDayEventGroup =
-                                  MultiDayEventGroup.fromEvents(
-                                events: [selectedEvent],
-                              );
+                                  MultiDayEventGroup.fromEvents(events: [selectedEvent], space: eventsController.space);
 
                               return MultiDayEventGroupWidget<T>(
                                 multiDayEventGroup: multiDayEventGroup,
