@@ -29,11 +29,8 @@ class Timeline extends StatelessWidget {
             top: (i * hourHeight),
             child: i == startHour - 1 || i == endHour - 1
                 ? const SizedBox()
-                : CalendarStyleProvider.of(context)
-                    .components
-                    .timelineTextBuilder
-                    .call(
-                      TimeOfDay(hour: i + 1, minute: 0),
+                : CalendarStyleProvider.of(context).components.timelineTextBuilder.call(
+                      TimeOfDay(hour: (i + 1), minute: 0),
                     ),
           ),
       ],
@@ -62,8 +59,7 @@ class TimelineText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final timelineStyle = CalendarStyleProvider.of(context).style.timelineStyle;
-    final use24HourFormat = timelineStyle.use24HourFormat ??
-        MediaQuery.of(context).alwaysUse24HourFormat;
+    final use24HourFormat = timelineStyle.use24HourFormat ?? MediaQuery.of(context).alwaysUse24HourFormat;
     final string = use24HourFormat
         ? '${timeOfDay.hour.toString().padLeft(2, '0')}:${timeOfDay.minute.toString().padLeft(2, '0')}'
         : '${((timeOfDay.hour - 1) % 12) + 1} ${timeOfDay.hour ~/ 12 == 0 ? "am" : "pm"}';

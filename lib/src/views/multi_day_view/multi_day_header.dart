@@ -82,12 +82,15 @@ class MultipleDayHeader<T> extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
         ...List.generate(
-          viewConfiguration.numberOfDays,
-          (index) => components.dayHeaderBuilder(
-            visibleDateTimeRange.start.add(Duration(days: index)),
-            (date) => scope.functions.onDateTapped?.call(date),
+          scope.eventsController.space,
+          (spaceIndex) => List.generate(
+            viewConfiguration.numberOfDays,
+            (dayIndex) => components.dayHeaderBuilder(
+              visibleDateTimeRange.start.add(Duration(days: dayIndex)),
+              (date) => scope.functions.onDateTapped?.call(date),
+            ),
           ),
-        ),
+        ).expand((element) => element).toList(),
       ],
     );
 
